@@ -1,8 +1,8 @@
 class UnionFind:
-    # n is the number of vertices in the graph
-    def __init__(self, n: int):
+    # nodes are all the nodes in a graph
+    def __init__(self, nodes):
         # Cities and their root/parent city {city: root}, cities are their own roots to start
-        self.parent_cities = {i: i for i in range(n)}
+        self.parent_cities = {i: i for i in nodes}
 
     def find(self, x: int) -> int:
         """Recursively searches for the root of a node
@@ -58,3 +58,31 @@ class UnionFind:
             raise TypeError(f"parent_cities is a dict, not a {type(snapshot)}")
 
         self.parent_cities = snapshot
+
+    def detect_cycle(self, paths: list) -> list:
+        """Finds the first valid path from a list of candidate paths that does not have a cycle.
+
+        Args:
+            paths (list): list of (path, cost) tuples from k_shortest_path
+
+        Returns:
+            A list containing the chosen (path, cost) tuple, or empty list if all paths form cycles
+        """
+        chosen_path = None
+        for path, cost in paths:
+            snap = self.snapshot()
+            cycle_found = False
+
+            for i in range(len(path) - 1):
+                if not self.union(path[i], path[i + 1]):
+                    cycle_found = True
+                    break
+
+            if cycle_found:
+                self.restore_snapshot(snap)
+            else:
+                chosen_path = (path, cost)
+                break
+
+        return [chosen_path] if chosen_path else []
+    

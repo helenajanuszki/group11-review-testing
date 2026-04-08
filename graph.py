@@ -6,6 +6,8 @@ def build_graph(edges):
     for x, y, z in edges:
         if x not in graph:
             graph[x] = []
+        if y not in graph:
+            graph[y] = []
         graph[x].append((y, z))
     return graph
 

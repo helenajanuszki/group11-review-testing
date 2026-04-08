@@ -1,6 +1,7 @@
 from graph import build_graph
 from k_shortest import k_shortest_path
 from path_utils import format_path
+from union_find import UnionFind
 
 def main():
     # randomly chosen edges
@@ -25,9 +26,11 @@ def main():
         (1, 7)
     ]
 
+    uf = UnionFind(graph.keys())
     for ticket in tickets:
         paths = k_shortest_path(graph, ticket[0], ticket[1], k=3)
-        result = format_path(ticket, paths)
+        chosen = uf.detect_cycle(paths)
+        result = format_path(ticket, chosen)
         print("\nTicket:", ticket)
         for p in result["paths"]:
             print("Path:", p["path"], "Cost:", p["cost"])
